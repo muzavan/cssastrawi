@@ -1,5 +1,5 @@
 /**
- * JSastrawi is licensed under The MIT License (MIT)
+ * CSSastrawi is licensed under The MIT License (MIT)
  *
  * Copyright (c) 2017 Muhammad Reza Irvanda
  *
