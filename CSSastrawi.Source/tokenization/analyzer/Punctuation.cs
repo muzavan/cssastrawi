@@ -1,5 +1,4 @@
 
-using CSSastrawi.Tokenization.Analyzer;
 using System.Collections.Generic;
 /**
 * JSastrawi is licensed under The MIT License (MIT)
