@@ -22,65 +22,75 @@
  * SOFTWARE.
  *
  */
-package CSSastrawi.morphology.defaultimpl;
+using CSSastrawi.Morphology.Defaultimpl.Visitor;
 
-import CSSastrawi.morphology.defaultimpl.visitor.ContextVisitor;
-
-/**
+namespace CSSastrawi.Morphology.Defaultimpl
+{
+    /**
  * Standard implementation of Removal
  */
-public class RemovalImpl implements Removal {
+    public class RemovalImpl : Removal
+    {
 
-    private final ContextVisitor visitor;
+        private readonly ContextVisitor visitor;
 
-    private final String subject;
+        private readonly string subject;
 
-    private final String result;
+        private readonly string result;
 
-    private final String removedPart;
+        private readonly string removedPart;
 
-    private final String affixType;
+        private readonly string affixType;
 
-    /**
-     * Constructor
-     *
-     * @param visitor visitor
-     * @param subject subject
-     * @param result result
-     * @param removedPart removed part
-     * @param affixType affix type
-     */
-    public RemovalImpl(ContextVisitor visitor, String subject, String result, String removedPart, String affixType) {
-        this.visitor = visitor;
-        this.subject = subject;
-        this.result = result;
-        this.removedPart = removedPart;
-        this.affixType = affixType;
-    }
+        /**
+         * Constructor
+         *
+         * @param visitor visitor
+         * @param subject subject
+         * @param result result
+         * @param removedPart removed part
+         * @param affixType affix type
+         */
+        public RemovalImpl(ContextVisitor visitor, string subject, string result, string removedPart, string affixType)
+        {
+            this.visitor = visitor;
+            this.subject = subject;
+            this.result = result;
+            this.removedPart = removedPart;
+            this.affixType = affixType;
+        }
 
-    @Override
-    public ContextVisitor getVisitor() {
-        return visitor;
-    }
 
-    @Override
-    public String getSubject() {
-        return subject;
-    }
+        public ContextVisitor GetVisitor()
+        {
+            return visitor;
+        }
 
-    @Override
-    public String getResult() {
-        return result;
-    }
 
-    @Override
-    public String getRemovedPart() {
-        return removedPart;
-    }
+        public string GetSubject()
+        {
+            return subject;
+        }
 
-    @Override
-    public String getAffixType() {
-        return affixType;
+
+        public string GetResult()
+        {
+            return result;
+        }
+
+
+        public string GetRemovedPart()
+        {
+            return removedPart;
+        }
+
+
+        public string GetAffixType()
+        {
+            return affixType;
+        }
+
     }
 
 }
+
