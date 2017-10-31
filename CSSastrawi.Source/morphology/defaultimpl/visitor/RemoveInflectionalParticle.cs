@@ -56,7 +56,7 @@ namespace CSSastrawi.Morphology.Defaultimpl.Visitor
         public string Remove(string word)
         {
             var regex = new Regex("(lah|kah|tah|pun)$");
-            return regex.Replace(word,"");
+            return regex.Replace(word, "");
         }
 
     }
