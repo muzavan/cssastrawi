@@ -22,38 +22,43 @@
  * SOFTWARE.
  *
  */
-package CSSastrawi.morphology.defaultimpl.visitor;
+using CSSastrawi.Morphology.Defaultimpl;
+using System.Text.RegularExpressions;
 
-import CSSastrawi.morphology.defaultimpl.Context;
-import CSSastrawi.morphology.defaultimpl.Removal;
-import CSSastrawi.morphology.defaultimpl.RemovalImpl;
-
-/**
- * Remove Inflectional Particle (lah|kah|tah|pun)
- */
-public class RemoveInflectionalParticle implements ContextVisitor {
-
-    @Override
-    public void visit(Context context) {
-        String result = remove(context.getCurrentWord());
-
-        if (!result.equals(context.getCurrentWord())) {
-            String removedPart = context.getCurrentWord().replaceFirst(result, "");
-
-            Removal r = new RemovalImpl(this, context.getCurrentWord(), result, removedPart, "P");
-            context.addRemoval(r);
-            context.setCurrentWord(result);
-        }
-    }
+namespace CSSastrawi.Morphology.Defaultimpl.Visitor
+{
 
     /**
-     * Remove inflectional particle from a word
-     *
-     * @param word word
-     * @return word after the derivational prefix has been removed
+     * Remove Inflectional Particle (lah|kah|tah|pun)
      */
-    public String remove(String word) {
-        return word.replaceAll("(lah|kah|tah|pun)$", "");
-    }
+    public class RemoveInflectionalParticle : ContextVisitor
+    {
+        public void Visit(Context context)
+        {
+            var result = Remove(context.CurrentWord);
 
+            if (!result.Equals(context.CurrentWord))
+            {
+                var removedPart = context.CurrentWord.Replace(result, ""); // Replace first?
+
+                Removal r = new RemovalImpl(this, context.CurrentWord, result, removedPart, "P");
+                context.AddRemoval(r);
+                context.CurrentWord = result;
+            }
+        }
+
+        /**
+         * Remove inflectional particle from a word
+         *
+         * @param word word
+         * @return word after the derivational prefix has been removed
+         */
+        public string Remove(string word)
+        {
+            var regex = new Regex("(lah|kah|tah|pun)$");
+            return regex.Replace(word,"");
+        }
+
+    }
 }
+
