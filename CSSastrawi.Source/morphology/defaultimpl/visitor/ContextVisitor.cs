@@ -22,19 +22,23 @@
  * SOFTWARE.
  *
  */
-package CSSastrawi.morphology.defaultimpl.visitor;
 
-import CSSastrawi.morphology.defaultimpl.Context;
-
-/**
- * Context Visitor.
- */
-public interface ContextVisitor {
-
-    /**
-     * Visit context
-     * 
-     * @param context context to visit
+using CSSastrawi.Morphology.Defaultimpl;
+namespace CSSastrawi.Morphology.Defaultimpl.Visitor
+{
+     /**
+     * Context Visitor.
      */
-    public void visit(Context context);
+        public interface ContextVisitor
+        {
+
+            /**
+             * Visit context
+             * 
+             * @param context context to visit
+             */
+            void Visit(Defaultimpl.Context context);
+        }
 }
+
+

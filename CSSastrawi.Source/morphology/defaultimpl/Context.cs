@@ -1,319 +1,370 @@
-/**
- * CSSastrawi is licensed under The MIT License (MIT)
- *
- * Copyright (c) 2017 Muhammad Reza Irvanda
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-package CSSastrawi.morphology.defaultimpl;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-import CSSastrawi.morphology.defaultimpl.confixstripping.PrecedenceAdjustmentSpec;
-import CSSastrawi.morphology.defaultimpl.visitor.ContextVisitor;
-import CSSastrawi.morphology.defaultimpl.visitor.VisitorProvider;
-
+using CSSastrawi.Morphology.Defaultimpl.Visitor;
+using Sastrawi.Mrphology.Defaultimpl.Confixstripping;
+using System.Collections.Generic;
 /**
+* CSSastrawi is licensed under The MIT License (MIT)
+*
+* Copyright (c) 2017 Muhammad Reza Irvanda
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*
+*/
+namespace CSSastrawi.Morphology.Defaultimpl
+{
+    /**
  * Encapsulated context in lemmatizing a word
  */
-public class Context {
+    public class Context
+    {
 
-    private final String originalWord;
-    private String currentWord;
-    private final Set<String> dictionary;
-    private final VisitorProvider visitorProvider;
-    private List<Removal> removals;
-    private String result;
-    private final List<ContextVisitor> visitors;
-    private final List<ContextVisitor> suffixVisitors;
-    private final List<ContextVisitor> prefixVisitors;
-    private boolean processIsStopped;
+        private readonly string originalWord;
+        private string currentWord;
+        private readonly ISet<string> dictionary;
+        private readonly VisitorProvider visitorProvider;
+        private List<Removal> removals;
+        private string result;
+        private readonly List<ContextVisitor> visitors;
+        private readonly List<ContextVisitor> suffixVisitors;
+        private readonly List<ContextVisitor> prefixVisitors;
+        private bool processIsStopped;
 
-    /**
-     * Constructor
-     *
-     * @param originalWord original word
-     * @param dictionary dictionary of root words
-     * @param visitorProvider visitor provider
-     */
-    public Context(String originalWord, Set<String> dictionary, VisitorProvider visitorProvider) {
-        this.originalWord = originalWord;
-        this.currentWord = this.originalWord;
-        this.dictionary = dictionary;
-        this.visitorProvider = visitorProvider;
-        this.removals = new LinkedList<>();
-
-        this.visitors = visitorProvider.getVisitors();
-        this.suffixVisitors = visitorProvider.getSuffixVisitors();
-        this.prefixVisitors = visitorProvider.getPrefixVisitors();
-    }
-
-    /**
-     * Get original word of which to find the lemma
-     *
-     * @return original word
-     */
-    public String getOriginalWord() {
-        return originalWord;
-    }
-
-    /**
-     * Set the current state of the word in the lemmatization process
-     *
-     * @param currentWord current word
-     */
-    public void setCurrentWord(String currentWord) {
-        this.currentWord = currentWord;
-    }
-
-    /**
-     * Get current word in the middle of lemmatization process
-     *
-     * @return current word
-     */
-    public String getCurrentWord() {
-        return currentWord;
-    }
-
-    /**
-     * Add removal to the collection for later use
-     *
-     * @param r removal
-     */
-    public void addRemoval(Removal r) {
-        removals.add(r);
-    }
-
-    /**
-     * Get removals
-     *
-     * @return removals
-     */
-    public List<Removal> getRemovals() {
-        return removals;
-    }
-
-    /**
-     * Get the lemma as a result of the lemmatization process
-     *
-     * @return result
-     */
-    public String getResult() {
-        return result;
-    }
-
-    /**
-     * Execute lemmatization process
-     */
-    public void execute() {
-        // step 1 - 5
-        startStemmingProcess();
-
-        // step 6
-        if (dictionary.contains(currentWord)) {
-            result = currentWord;
-        } else {
-            result = originalWord;
-        }
-    }
-
-    private void startStemmingProcess() {
-
-        // step 1
-        if (dictionary.contains(currentWord)) {
-            return;
-        }
-
-        if (currentWord.length() <= 3) {
-            return;
-        }
-
-        acceptVisitors(visitors);
-
-        if (dictionary.contains(currentWord)) {
-            return;
-        }
-
-        PrecedenceAdjustmentSpec spec = new PrecedenceAdjustmentSpec();
-
-        /*
-         * Confix Stripping
-         * Try to remove prefix before suffix if the specification is met
+        /**
+         * Constructor
+         *
+         * @param originalWord original word
+         * @param dictionary dictionary of root words
+         * @param visitorProvider visitor provider
          */
-        if (spec.isSatisfiedBy(originalWord)) {
-            // step 4, 5
-            removePrefixes();
-            if (dictionary.contains(currentWord)) {
-                return;
+        public Context(string originalWord, ISet<string> dictionary, VisitorProvider visitorProvider)
+        {
+            this.originalWord = originalWord;
+            this.currentWord = this.originalWord;
+            this.dictionary = dictionary;
+            this.visitorProvider = visitorProvider;
+            this.removals = new List<Removal>();
+
+            this.visitors = visitorProvider.getVisitors();
+            this.suffixVisitors = visitorProvider.getSuffixVisitors();
+            this.prefixVisitors = visitorProvider.getPrefixVisitors();
+        }
+
+        /**
+         * Get original word of which to find the lemma
+         *
+         * @return original word
+         */
+        public string OriginalWord
+        {
+            get
+            {
+                return originalWord;
             }
-
-            // step 2, 3
-            removeSuffixes();
-            if (dictionary.contains(currentWord)) {
-                return;
-            } else {
-                // if the trial is failed, restore the original word
-                // and continue to normal rule precedence (suffix first, prefix afterwards)
-                setCurrentWord(originalWord);
-                removals.clear();
-            }
         }
 
-        // step 2, 3
-        removeSuffixes();
-        if (dictionary.contains(currentWord)) {
-            return;
-        }
-
-        // step 4, 5
-        removePrefixes();
-        if (dictionary.contains(currentWord)) {
-            return;
-        }
-
-        loopPengembalianAkhiran();
-    }
-
-    private String acceptVisitors(List<ContextVisitor> visitors) {
-        for (ContextVisitor visitor : visitors) {
-            accept(visitor);
-
-            if (dictionary.contains(currentWord)) {
+        /**
+         * Set the current state of the word in the lemmatization process
+         *
+         * @param currentWord current word
+         */
+        public string CurrentWord
+        {
+            get
+            {
                 return currentWord;
             }
+            set
+            {
+                currentWord = value;
+            }
+        }
+        
+        /**
+         * Add removal to the collection for later use
+         *
+         * @param r removal
+         */
+        public void AddRemoval(Removal r)
+        {
+            removals.Add(r);
+        }
 
-            if (processIsStopped) {
-                return currentWord;
+        /**
+         * Get removals
+         *
+         * @return removals
+         */
+        public List<Removal> Removals
+        {
+            get{
+                return removals;
             }
         }
 
-        return currentWord;
-    }
-
-    private void accept(ContextVisitor visitor) {
-        visitor.visit(this);
-    }
-
-    private void removeSuffixes() {
-        acceptVisitors(suffixVisitors);
-    }
-
-    private void removePrefixes() {
-        for (int i = 0; i < 3; i++) {
-            acceptPrefixVisitors(prefixVisitors);
-            if (dictionary.contains(currentWord)) {
-                return;
+        /**
+         * Get the lemma as a result of the lemmatization process
+         *
+         * @return result
+         */
+        public string Result
+        {
+            get
+            {
+                return result;
             }
         }
-    }
 
-    private void acceptPrefixVisitors(List<ContextVisitor> prefixVisitors) {
-        int removalCount = removals.size();
+        /**
+         * Execute lemmatization process
+         */
+        public void Execute()
+        {
+            // step 1 - 5
+            _StartStemmingProcess();
 
-        for (ContextVisitor visitor : prefixVisitors) {
-            accept(visitor);
-
-            if (dictionary.contains(currentWord)) {
-                return;
+            // step 6
+            if (dictionary.Contains(currentWord))
+            {
+                result = currentWord;
             }
-
-            if (processIsStopped) {
-                return;
-            }
-
-            if (removals.size() > removalCount) {
-                return;
+            else
+            {
+                result = originalWord;
             }
         }
-    }
 
-    /**
-     * Get dictionary
-     *
-     * @return dictionary
-     */
-    public Set<String> getDictionary() {
-        return dictionary;
-    }
+        private void _StartStemmingProcess()
+        {
 
-    private void loopPengembalianAkhiran() {
-        // restore prefix to form [DP+[DP+[DP]]] + Root word
-        restorePrefix();
-
-        List<Removal> originalRemovals = removals;
-        LinkedList<Removal> reversedRemovals = new LinkedList<>(removals);
-        Collections.reverse(reversedRemovals);
-        String originalCurrentWord = currentWord;
-
-        for (Removal removal : reversedRemovals) {
-            if (!isSuffixRemoval(removal)) {
-                continue;
+            // step 1
+            if (dictionary.Contains(currentWord))
+            {
+                return;
             }
 
-            if (removal.getRemovedPart().equals("kan")) {
-                setCurrentWord(removal.getResult() + "k");
+            if (currentWord.Length <= 3)
+            {
+                return;
+            }
 
+            acceptVisitors(visitors);
+
+            if (dictionary.Contains(currentWord))
+            {
+                return;
+            }
+
+            var spec = new PrecedenceAdjustmentSpec();
+
+            /*
+             * Confix Stripping
+             * Try to remove prefix before suffix if the specification is met
+             */
+            if (spec.IsSatisfiedBy(originalWord))
+            {
                 // step 4, 5
-                removePrefixes();
-                if (dictionary.contains(currentWord)) {
+                _RemovePrefixes();
+                if (dictionary.Contains(currentWord))
+                {
                     return;
                 }
 
-                setCurrentWord(removal.getResult() + "kan");
-            } else {
-                setCurrentWord(removal.getSubject());
+                // step 2, 3
+                _RemoveSuffixes();
+                if (dictionary.Contains(currentWord))
+                {
+                    return;
+                }
+                else
+                {
+                    // if the trial is failed, restore the original word
+                    // and continue to normal rule precedence (suffix first, prefix afterwards)
+                    CurrentWord = originalWord;
+                    removals.Clear();
+                }
             }
 
-            // step 4, 5
-            removePrefixes();
-            if (dictionary.contains(currentWord)) {
+            // step 2, 3
+            _RemoveSuffixes();
+            if (dictionary.Contains(currentWord))
+            {
                 return;
             }
 
-            this.removals = originalRemovals;
-            setCurrentWord(originalCurrentWord);
-        }
-    }
+            // step 4, 5
+            _RemovePrefixes();
+            if (dictionary.Contains(currentWord))
+            {
+                return;
+            }
 
-    private void restorePrefix() {
-        for (Removal removal : removals) {
-            if (removal.getAffixType().equals("DP")) {
-                setCurrentWord(removal.getSubject());
-                break;
+            _LoopPengembalianAkhiran();
+        }
+
+        private string acceptVisitors(List<ContextVisitor> visitors)
+        {
+            foreach(ContextVisitor visitor in visitors)
+            {
+                _Accept(visitor);
+
+                if (dictionary.Contains(currentWord))
+                {
+                    return currentWord;
+                }
+
+                if (processIsStopped)
+                {
+                    return currentWord;
+                }
+            }
+
+            return currentWord;
+        }
+
+        private void _Accept(ContextVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+
+        private void _RemoveSuffixes()
+        {
+            acceptVisitors(suffixVisitors);
+        }
+
+        private void _RemovePrefixes()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                _AcceptPrefixVisitors(prefixVisitors);
+                if (dictionary.Contains(currentWord))
+                {
+                    return;
+                }
             }
         }
 
-        ListIterator<Removal> iter = removals.listIterator();
-        while (iter.hasNext()) {
-            if (iter.next().getAffixType().equals("DP")) {
-                iter.remove();
+        private void _AcceptPrefixVisitors(List<ContextVisitor> prefixVisitors)
+        {
+            int removalCount = removals.Count;
+
+            foreach(var visitor in prefixVisitors)
+            {
+                _Accept(visitor);
+
+                if (dictionary.Contains(currentWord))
+                {
+                    return;
+                }
+
+                if (processIsStopped)
+                {
+                    return;
+                }
+
+                if (removals.Count > removalCount)
+                {
+                    return;
+                }
             }
         }
-    }
 
-    private boolean isSuffixRemoval(Removal removal) {
-        return removal.getAffixType().equals("DS")
-                || removal.getAffixType().equals("PP")
-                || removal.getAffixType().equals("P");
+        /**
+         * Get dictionary
+         *
+         * @return dictionary
+         */
+        public ISet<string> Dictionary
+        {
+            get
+            {
+                return dictionary;
+            }
+        }
+
+        private void _LoopPengembalianAkhiran()
+        {
+            // restore prefix to form [DP+[DP+[DP]]] + Root word
+            _RestorePrefix();
+
+            List<Removal> originalRemovals = removals;
+            List<Removal> reversedRemovals = new List<Removal>(removals);
+            reversedRemovals.Reverse();
+            string originalCurrentWord = currentWord;
+
+            foreach(Removal removal in reversedRemovals)
+            {
+                if (!IsSuffixRemoval(removal))
+                {
+                    continue;
+                }
+
+                if (removal.GetRemovedPart().Equals("kan"))
+                {
+                    CurrentWord = removal.GetResult() + "k";
+
+                    // step 4, 5
+                    _RemovePrefixes();
+                    if (dictionary.Contains(currentWord))
+                    {
+                        return;
+                    }
+
+                    CurrentWord = removal.GetResult() + "kan";
+                }
+                else
+                {
+                    CurrentWord = removal.GetSubject();
+                }
+
+                // step 4, 5
+                _RemovePrefixes();
+                if (dictionary.Contains(currentWord))
+                {
+                    return;
+                }
+
+                this.removals = originalRemovals;
+                CurrentWord = originalCurrentWord;
+            }
+        }
+
+        private void _RestorePrefix()
+        {
+            foreach(var removal in removals)
+            {
+                if (removal.GetAffixType().Equals("DP"))
+                {
+                    CurrentWord = removal.GetSubject();
+                    break;
+                }
+            }
+
+            removals.RemoveAll(x => x.GetAffixType().Equals("DP"));
+        }
+
+        private bool IsSuffixRemoval(Removal removal)
+        {
+            return removal.GetAffixType().Equals("DS")
+                    || removal.GetAffixType().Equals("PP")
+                    || removal.GetAffixType().Equals("P");
+        }
     }
 }
+
+
