@@ -22,18 +22,22 @@
  * SOFTWARE.
  *
  */
-package CSSastrawi.morphology;
-
-/**
+namespace CSSastrawi.Morphology
+{
+    /**
  * The Lemmatizer is a tool to reduce a word to its base form (lemma).
  */
-public interface Lemmatizer {
+    public interface Lemmatizer
+    {
 
-    /**
-     * Reduce a word to its base form (lemma)
-     *
-     * @param word the word of which to find the lemma
-     * @return the lemma (base form)
-     */
-    public String lemmatize(String word);
+        /**
+         * Reduce a word to its base form (lemma)
+         *
+         * @param word the word of which to find the lemma
+         * @return the lemma (base form)
+         */
+        string Lemmatize(string word);
+    }
+
 }
+
