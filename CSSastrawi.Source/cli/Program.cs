@@ -1,5 +1,7 @@
 
+using CSSastrawi.Cli.Output;
 using System;
+using System.Collections.Generic;
 /**
 * CSSastrawi is licensed under The MIT License (MIT)
 *
@@ -29,7 +31,7 @@ namespace CSSastrawi.Cli
     /**
  * The main class for Command Line Interface.
  */
-    public class Main
+    public class Program
     {
 
         /**
@@ -38,20 +40,18 @@ namespace CSSastrawi.Cli
          * @param args Command line arguments
          * @throws IOException IOException
          */
-        public static void main(String[] args) throws IOException
-        {
-        if (args.length == 0) {
+        public static void Main(string[] args) {
+            if (args.Length == 0) {
                 printHelp();
-            } else if (args [0].toLowerCase().equals("lemmatize")) {
-                Output bufferedOutput = new BufferedOutput();
+            } else if (args[0].ToLower().Equals("lemmatize")) {
+                Output.Output bufferedOutput = new BufferedOutput();
                 LemmatizeCmd lemmatizeCmd = new LemmatizeCmd(bufferedOutput);
-                lemmatizeCmd.handle(removeCommandFromArgs(args));
-                System.out.print(bufferedOutput.toString());
+                lemmatizeCmd.handle(RemoveCommandFromArgs(args));
+                Console.Write(bufferedOutput.ToString());
             } else {
                 printHelp();
             }
         }
-
         /**
          * Print Command Line usage
          */
@@ -70,14 +70,15 @@ namespace CSSastrawi.Cli
          * @param args arguments
          * @return a new array of arguments after the command has been removed
          */
-        static String[] removeCommandFromArgs(String[] args)
+        static string[] RemoveCommandFromArgs(string[] args)
         {
-            List<String> largs = new ArrayList<>(Arrays.asList(args));
-            if (largs.size() > 0)
+            List<string> largs = new List<string>();
+            largs.AddRange(args);
+            if (largs.Count > 0)
             {
-                largs.remove(0);
+                largs.Remove(largs[0]);
             }
-            return largs.toArray(new String[0]);
+            return largs.ToArray();
         }
     }
 } 
